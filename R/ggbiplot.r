@@ -52,7 +52,8 @@ ggbiplot <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE,
                       var.axes = TRUE, 
                       circle = FALSE, circle.prob = 0.69, 
                       varname.size = 3, varname.adjust = 1.5, 
-                      varname.abbrev = FALSE, ...)
+                      varname.abbrev = FALSE, 
+                      var.quantile.threshold = 0, ...)
 {
   library(ggplot2)
   library(plyr)
@@ -159,7 +160,7 @@ ggbiplot <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE,
 
     # Draw directions
     g <- g +
-      geom_segment(data = df.v,
+      geom_segment(data = df.v[quantile(sqrt(df.v.xend ^ 2 + df.v.yend ^ 2), var.quantile.threshold) =< sqrt(df.v.xend ^ 2 + df.v.yend ^ 2),],
                    aes(x = 0, y = 0, xend = xvar, yend = yvar),
                    arrow = arrow(length = unit(1/2, 'picas')), 
                    color = muted('red'))
@@ -203,7 +204,7 @@ ggbiplot <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE,
   # Label the variable axes
   if(var.axes) {
     g <- g + 
-    geom_text(data = df.v, 
+    geom_text(data = df.v[quantile(sqrt(df.v.xend ^ 2 + df.v.yend ^ 2), var.quantile.threshold) =< sqrt(df.v.xend ^ 2 + df.v.yend ^ 2),],
               aes(label = varname, x = xvar, y = yvar, 
                   angle = angle, hjust = hjust), 
               color = 'darkred', size = varname.size)
